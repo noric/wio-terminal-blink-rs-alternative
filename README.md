@@ -61,6 +61,18 @@ warning: build failed, waiting for other jobs to finish...
 ```
 
 
+## 修正箇所
+
+### .cargo/config の Deprecation Warning
+
+cargo コマンドのバージョン 1.78 から、 cargo 設定ファイルの既定値が
+`.cargo/config` から `.cargo/config.toml` に正式に変更されていたため、
+`PROJECT_ROOT/.cargo/config` ファイルを "PROJECT_ROOT/.cargo/config.toml" に
+リネームしました。 cargo 設定ファイルの内容自体の変更はありません。
+
+- [Deprecate non-extension .cargo/config files. - CHANGELOG Cargo 1.78 (2024-05-02)][cargo_changelog_1_78]
+
+
 ## 参照資料
 
 ### オリジナル実装
@@ -68,6 +80,11 @@ warning: build failed, waiting for other jobs to finish...
 - [tomoyuki-nakabayashi / wio-terminal-blink-rs (フォーク元) - GitHub][github_wio_terminal_blink_rs]
 - [オリジナル README.md][original_readme_md]
 
+### .cargo/config の Deprecation Warning
+
+- [Deprecate non-extension .cargo/config files. - CHANGELOG Cargo 1.78 (2024-05-02)][cargo_changelog_1_78]
+
 [github_wio_terminal_blink_rs]: https://github.com/tomoyuki-nakabayashi/wio-terminal-blink-rs
 [original_readme_md]: README-original.md
 [book_embedded_rust]: https://www.c-r.com/book/detail/1403
+[cargo_changelog_1_78]: https://doc.rust-lang.org/nightly/cargo/CHANGELOG.html#cargo-178-2024-05-02
