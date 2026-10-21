@@ -135,6 +135,34 @@ let mut user_led = Pin::<_, PushPullOutput>::from(pins.user_led);
 という記法を採用しています。これは単純に `user_led` という変数にだけ型指定を
 したくなかっただけで、特に意味はありません。
 
+### Rust の edition と依存ライブラリの更新
+
+上記の .cargo/config ファイルの Deprecation Warning の修正と mismatched types
+エラーの修正で、当初の目的であった "L チカ" は動作するようになりましたが、折角
+なので、 Cargo.toml の Rust の edition と、もう一つの依存ライブラリである
+panic-halt クレートのバージョンを、どちらも 2026-10-21 時点の最新に更新しました。
+
+
+## 注意事項
+
+このリポジトリは、書籍 「基礎から学ぶ組込み Rust」 の一読者が、書籍の内容の学習
+の為に勝手に作成したもので、書籍やそのサポートサイトとは無関係です。この
+リポジトリでの修正箇所のコードは無保証で、その利用は自己責任となります。十分に
+ご注意下さい。
+
+昨今はセキュリティ侵害の事例が多発しているようで、このリポジトリのような書籍の
+サンプルコードが攻撃面になることも十分にあり得ます。内容を理解しないまま Wio
+Terminal のようなハードウェアにコードを書き込む行為は、可能な限り避ける事を
+お勧めします。
+
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+> SOFTWARE.
+
 
 ## 参照資料
 
