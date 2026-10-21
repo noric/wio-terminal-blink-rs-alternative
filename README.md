@@ -72,6 +72,69 @@ cargo コマンドのバージョン 1.78 から、 cargo 設定ファイルの�
 
 - [Deprecate non-extension .cargo/config files. - CHANGELOG Cargo 1.78 (2024-05-02)][cargo_changelog_1_78]
 
+### mismatched types エラー
+
+このエラーは、 wio_terminal 0.3.0 クレートが内部で使用している seeed-erpc 0.1.3
+クレートとの競合により、依存クレートのツリーの中に二つのバージョンの heapless
+クレートが含まれるようになってしまった事が直接の原因だったようです。
+
+```
+$ cargo tree
+wio-terminal-blink-rs v0.1.0 (learning_embedded_rust/wio-terminal-blink-rs)
+├── panic-halt v0.2.0
+└── wio_terminal v0.3.0
+    ├── atsamd-hal v0.12.0
+    │   ├── atsamd51p v0.9.0
+
+    # ... snip ...
+
+    ├── generic-array v0.14.9 (*)
+    ├── heapless v0.5.6        # <= wio-terminal-0.3.0 が heapless-0.5.6 に依存
+    │   ├── as-slice v0.1.5 (*)
+
+    # ... snip ...
+
+    ├── seeed-erpc v0.1.3
+    │   ├── bbqueue v0.4.12 (*)
+    │   ├── bitfield v0.13.2
+    │   ├── bitflags v1.3.2
+    │   ├── generic-array v0.14.9 (*)
+    │   ├── heapless v0.8.0   # <= seeed-erpc-0.1.3 が heapless-0.8.0 に依存
+```
+
+このエラーは、おそらく seeed-erpc クレートのバージョンを Cargo.toml ファイルに
+明示的に指定する方法でも修正可能だと思われますが、このリポジトリでは、
+wio_terminal クレートのバージョンを 2026-10-21 時点で最新の `0.9.0` に
+アップグレードする方法を採用しました。
+
+wio_terminal 0.9.0 クレートでは、依存している atsamd_hal クレートで GPIO に
+アクセスする為の API が変更されおり、この変更に合わせて src/main.rs の user_led
+を取得する処理も変更しています。
+
+- [atsamd_hal Module gpio - https://docs.rs/atsamd-hal/0.21.3][rs_docs_atsamd_hal_0_21_3_gpio]
+
+ちなみに atsamd_hal クレートで行われた GPIO の API は、
+`user_led.into_push_pull_output()` のような関数を呼び出す方式から、書籍の
+Chapter 3-13 "型変換" で解説されている Into / From トレイトを利用した
+型パラメータを指定する方式に変更になっているようです。
+
+なお、このインターフェースは、上記の atsamd_hal クレートのドキュメントに記載
+されているように、一般的には、
+
+``` rust
+let mut user_led: Pin<_, PushPullOutput> = pins.pa15.into();
+```
+
+のように `into()` 関数を使用する習慣があるようでしたが、このリポジトリの修正では、
+既存コードとの見た目の一貫性を優先して、
+
+``` rust
+let mut user_led = Pin::<_, PushPullOutput>::from(pins.user_led);
+```
+
+という記法を採用しています。これは単純に `user_led` という変数にだけ型指定を
+したくなかっただけで、特に意味はありません。
+
 
 ## 参照資料
 
@@ -84,7 +147,16 @@ cargo コマンドのバージョン 1.78 から、 cargo 設定ファイルの�
 
 - [Deprecate non-extension .cargo/config files. - CHANGELOG Cargo 1.78 (2024-05-02)][cargo_changelog_1_78]
 
+### mismatched types エラー
+
+- [Crate wio_terminal 0.9.0 - https://docs.rs/wio_terminal/0.9.0/wio_terminal/][rs_docs_wio_terminal_0_9_0]
+- [atsamd_hal Module gpio - https://docs.rs/atsamd-hal/0.21.3][rs_docs_atsamd_hal_0_21_3_gpio]
+  - atsamd_hal クレートの新しい GPIO  API (v2) に関する情報は、上のリンク先に
+    まとめられている
+
 [github_wio_terminal_blink_rs]: https://github.com/tomoyuki-nakabayashi/wio-terminal-blink-rs
 [original_readme_md]: README-original.md
 [book_embedded_rust]: https://www.c-r.com/book/detail/1403
 [cargo_changelog_1_78]: https://doc.rust-lang.org/nightly/cargo/CHANGELOG.html#cargo-178-2024-05-02
+[rs_docs_wio_terminal_0_9_0]: https://docs.rs/wio_terminal/0.9.0/wio_terminal/
+[rs_docs_atsamd_hal_0_21_3_gpio]: https://docs.rs/atsamd-hal/0.21.3/atsamd_hal/gpio/index.html
