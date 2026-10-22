@@ -11,7 +11,12 @@ Section-02 に掲載されている ["L チカ" サンプル][github_wio_termina
 - Rust 1.99.1 (5f94df478 2026-08-27)
 
 という開発環境で発生する、以下の 3 件の mismatched types エラーと、 1 件の
-deprecation warning の問題に対応しています。
+deprecation warning の問題に、 "Rust の edition や依存クレートのバージョンを上げる"
+という方針で対応しています。(もし、ビルド時に "there are multiple different versions
+of crate `heapless` dependency graph" というエラーが発生する問題を修正したいのであれ
+ば、コミット https://github.com/noric/wio-terminal-blink-rs-alternative/commit/7785d5ec28e32f57ecce669b62e22d40ebfcc638
+の、 Cargo.toml ファイルへの依存性の追加による修正の方がシンプルで、書籍の内容からの
+乖離もありません。)
 
 ```
 $ cargo hf2
@@ -102,10 +107,15 @@ wio-terminal-blink-rs v0.1.0 (learning_embedded_rust/wio-terminal-blink-rs)
     │   ├── heapless v0.8.0   # <= seeed-erpc-0.1.3 が heapless-0.8.0 に依存
 ```
 
-このエラーは、おそらく seeed-erpc クレートのバージョンを Cargo.toml ファイルに
-明示的に指定する方法でも修正可能だと思われますが、このリポジトリでは、
-wio_terminal クレートのバージョンを 2026-10-21 時点で最新の `0.9.0` に
-アップグレードする方法を採用しました。
+**なお、このエラーは、 Cargo.toml ファイルの dependencies セクションに、
+`seeed-erpc = "= 0.1.1"` という行を追加して、明示的バージョンを 0.1.1 に固定する
+ことでも解消可能です。** 単に書籍のサンプルを動かすことが目的である場合は、この
+方法の方がシンプルです。詳しくは、 https://github.com/noric/wio-terminal-blink-rs-alternative/commit/7785d5ec28e32f57ecce669b62e22d40ebfcc638
+のコミットを参照して下さい。
+
+このリポジトリでは、書籍の出版後の組込み Rust の変化を追うため、あえて wio_terminal
+クレートのバージョンを 2026-10-21 時点で最新の `0.9.0` にアップグレードする方法を
+採用しています。
 
 wio_terminal 0.9.0 クレートでは、依存している atsamd_hal クレートで GPIO に
 アクセスする為の API が変更されおり、この変更に合わせて src/main.rs の user_led
@@ -149,11 +159,6 @@ panic-halt クレートのバージョンを、どちらも 2026-10-21 時点の
 の為に勝手に作成したもので、書籍やそのサポートサイトとは無関係です。この
 リポジトリでの修正箇所のコードは無保証で、その利用は自己責任となります。十分に
 ご注意下さい。
-
-昨今はセキュリティ侵害の事例が多発しているようで、このリポジトリのような書籍の
-サンプルコードが攻撃面になることも十分にあり得ます。内容を理解しないまま Wio
-Terminal のようなハードウェアにコードを書き込む行為は、可能な限り避ける事を
-お勧めします。
 
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 > IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
