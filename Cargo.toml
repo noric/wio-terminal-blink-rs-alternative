@@ -5,5 +5,24 @@ authors = ["tomoyuki-nakabayashi <tomo.wait.for.it.yuki@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+# wio_terminal 0.3.0 は、 heapless ^0.5 と seeed-erpc ^0.1.1 に依存していますが、
+# その seeed-erpc は、バージョン 0.1.2 から heapless ^0.8.0 に依存するようにク
+# レートが更新されています。そのため、以下の行で seeed-erpc のバージョンを 0.1.1
+# に明示的に固定しておかないと、 heapless 0.5 系と 0.8 系の二つが依存ツリーに含
+# まれてしまい、競合によりビルドに失敗します。その場合は、ビルド時に以下のような
+# エラーが表示されます。
+#
+# ```
+# note: there are multiple different versions of crate `heapless` in the
+# dependency graph
+# ```
+#
+# 各クレートの依存関係については、以下のサイト等を参照して下さい。
+#
+# - See: https://crates.io/crates/wio_terminal/0.3.0/dependencies
+# - See: https://crates.io/crates/seeed-erpc/0.1.2/dependencies
+# - See: https://crates.io/crates/seeed-erpc/0.1.1/dependencies
+seeed-erpc = "= 0.1.1"
+
 wio_terminal = "0.3.0"
 panic-halt = "0.2"
